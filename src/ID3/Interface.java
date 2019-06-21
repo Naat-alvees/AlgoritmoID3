@@ -211,10 +211,10 @@ public class Interface extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void executarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executarActionPerformed
-        ImplementacaoID3 algoritmoID3= new ImplementacaoID3();
         try {
             if(!caminhoArquivoTreinamento.getPath().isEmpty() && !caminhoArquivoTeste.getPath().isEmpty()){
-                algoritmoID3.tratarArquivo(caminhoArquivoTreinamento.getPath(), caminhoArquivoTeste.getPath());
+                ImplementacaoID3 algoritmoID3 = new ImplementacaoID3(caminhoArquivoTreinamento.getPath(), caminhoArquivoTeste.getPath(),3);
+                algoritmoID3.principal();
             }
         } catch (IOException ex) {
              JOptionPane.showMessageDialog(null, "Arquivo incorreto!", "Atenção", JOptionPane.WARNING_MESSAGE);
