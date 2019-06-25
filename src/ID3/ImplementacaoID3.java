@@ -14,24 +14,33 @@ public class ImplementacaoID3 {
     
     
     public ImplementacaoID3(String caminhoArquivoTreinamento, String caminhoArquivoTeste, int qntdClasse) throws IOException{
+        vetorAtributos = new ArrayList<>();
         tratarArquivo(caminhoArquivoTreinamento, caminhoArquivoTeste);
         quantidadeClasses = qntdClasse;
-        vetorAtributos = new ArrayList<>();
-        atributosUsados = new boolean[atributosTreinamento[0].length];
-        for (int i = 0; i < atributosUsados.length; i++){
-            atributosUsados[i] = false;
-        }
     }
     
     public void principal()
     {
-        No raiz = new No();
         
+        No raiz = new No(vetorAtributos.size());
+        
+        raiz.setPai(null);
+        raiz.setId(escolherMelhorAtributo(calcularEntropiaTotal(),raiz.getAtributoUsados()));
+        raiz.setCorte(calcularCorte(vetorAtributos.get(raiz.getId())));
+        raiz.setPrimeiroVetorPosicoes(vetorAtributos.get(0).length);
+        
+        //gerarArvore(raiz);
+        
+        
+  
+        
+        //escolherMelhorAtributo(calcularEntropiaTotal(),atributosUsados);
         //this.costruirArvore(raiz,1);
-        costruirArrayAtributos();
+        
     }
     
-    public void tratarArquivo(String caminhoArquivoTreinamento, String caminhoArquivoTeste) throws IOException{
+    public void tratarArquivo(String caminhoArquivoTreinamento, String caminhoArquivoTeste) throws IOException
+    {
         ArrayList<String> arquivoInteiroTreinamento = new ArrayList<>();
         ArrayList<String> arquivoInteiroTeste = new ArrayList<>();
         String linhaLida[];
@@ -62,9 +71,8 @@ public class ImplementacaoID3 {
                 atributosTeste[i][j] = Double.parseDouble(linhaLida[j]);
             }
         }
+        costruirArrayAtributos();
         
-        //this.divideDadosContinuos(atributosTreinamento);7
-//        this.entropiaTotal(classe, 3);
     }
     
     public void costruirArrayAtributos()
@@ -76,32 +84,37 @@ public class ImplementacaoID3 {
             atributosI = new double[atributosTreinamento.length];
             for (int j = 0; j < atributosI.length; j++) {
                 atributosI[j] = atributosTreinamento[j][idAtributo];
-                System.out.println(atributosI[j]+ " ");
             }
             vetorAtributos.add(i,atributosI);
-
             idAtributo++;
-            System.out.println("");
         }
-        
-        for (int i = 0; i < vetorAtributos.size(); i++)
-        {
-            for (int j = 0; j < vetorAtributos.get(i).length; j++)
-            {
-                System.out.print(vetorAtributos.get(i)[j] + " ");
-            }
-            System.out.println("");
-        }
+       
     }
     
-    public void costruirArvore(No no,double entropiaTotal)
-    {
-        escolherMelhorAtributo(entropiaTotal);
+    public No gerarArvore(No noAtual){
+        if(verificarEstadoFinal(noAtual.getPosicoesClasses())) {
+            return noAtual;
+        }
+        
+        // Dividir filhos
+                
+        
+        return null;
     }
+    
+    public boolean verificarEstadoFinal(ArrayList<Integer> posicoes){
+        //Essa função pode não estar funcionando
+        for (int i = 1; i < posicoes.size(); i++) {
+            if(classe[posicoes.get(i-1)] != classe[posicoes.get(i)]){
+                return false;
+            }
+        }
+        return true;
+    }
+    
     
     public double calcularEntropiaAtributos(double[] dadosAtributos)
     { 
-  
         double corte = calcularCorte(dadosAtributos);
         double[] numClassesCorte1 = new double[quantidadeClasses+1];
         double[] numClassesCorte2 = new double[quantidadeClasses+1];
@@ -153,7 +166,8 @@ public class ImplementacaoID3 {
         
     }
     
-    public double calcularCorte(double[] dadosAtributos){
+    public double calcularCorte(double[] dadosAtributos)
+    {
         double corte = 0.0;
         double[] atributosI = new double[dadosAtributos.length];
         for (int i = 0; i < dadosAtributos.length; i++)
@@ -165,8 +179,6 @@ public class ImplementacaoID3 {
 
         return corte;
     }
-    
-    
     
     public double calcularEntropiaTotal()
     {
@@ -185,9 +197,9 @@ public class ImplementacaoID3 {
         for (int i = 1; i <= quantidadeClasses; i++)
         {
             pi = (double)contaClasse[i]/(double)classe.length;
-            entropiaTotal += (pi * (-pi * (Math.log(pi)/Math.log(2))));
+            entropiaTotal += (-pi * (Math.log(pi)/Math.log(quantidadeClasses)));
         }
-        
+        System.out.println("Entropia total:"+entropiaTotal);
         return entropiaTotal;
     }
     
@@ -199,7 +211,7 @@ public class ImplementacaoID3 {
         return ganho;
     }
     
-    public int escolherMelhorAtributo(double entropiaTotal)
+    public int escolherMelhorAtributo(double entropiaTotal, boolean[] atributosUsados)
     {
         int idMelhorAtributo = Integer.MAX_VALUE;
         double ganho = Double.MIN_VALUE, entropiaParcial = 0.0, ganhoParcial = 0.0;
@@ -207,18 +219,17 @@ public class ImplementacaoID3 {
         for (int i = 0; i < atributosUsados.length; i++)
         {
             if(!atributosUsados[i]){
-                //entropiaParcial = calcularEntropiaAtributos(selecionarColunaAtributo(i)); 
+                entropiaParcial = calcularEntropiaAtributos(vetorAtributos.get(i)); 
                 ganhoParcial = calcularGanho(entropiaTotal, entropiaParcial);
-                System.out.println("Ganho Parcial: " + ganhoParcial);
+                //System.out.println("Ganho Parcial: " + ganhoParcial);
                 if(ganhoParcial>ganho){
-                    System.out.println("entreiii");
+                    //System.out.println("entreiii");
                     ganho = ganhoParcial;
                     idMelhorAtributo = i;
                 }
                 
             }
         }
-        atributosUsados[idMelhorAtributo] = true;
         return idMelhorAtributo;
     }
     

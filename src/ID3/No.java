@@ -4,18 +4,61 @@ import java.util.ArrayList;
 
 public class No
 {
+    private int id;
     private No pai;
     private ArrayList<No> filhos;
-    private double corte, entropia, ganho;
+    private boolean atributoUsados[]; 
+    private double corte;
+    private ArrayList<Integer> posicoesClasses;
     
     
-    public No()
+    public No(int qntAtributos)
     {
+        this.posicoesClasses = new ArrayList<>();
+        this.atributoUsados = new boolean[qntAtributos];
         this.pai = null;
         this.filhos = new ArrayList<>();
         this.corte = 0.0;
-        this.entropia = 0.0;
-        this.ganho = 0.0;
+        
+    }
+
+    @Override
+    public String toString() {
+        return "No{" + "id=" + id + ", pai=" + pai + ", atributoUsados=" + atributoUsados[id-1] + ", corte=" + corte + '}';
+    }
+
+    public ArrayList<Integer> getPosicoesClasses() {
+        return posicoesClasses;
+    }
+
+    public void setPosicoesClasses(ArrayList<Integer> posicoesClasses) {
+        this.posicoesClasses = posicoesClasses;
+    }
+
+    
+    public No getPai() {
+        return pai;
+    }
+
+    public void setPai(No pai) {
+        this.pai = pai;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    
+    public boolean[] getAtributoUsados() {
+        return atributoUsados;
+    }
+
+    public void setAtributoUsados(int posicao) {
+        this.atributoUsados[posicao] = true;
     }
 
     public double getCorte()
@@ -27,25 +70,11 @@ public class No
     {
         this.corte = corte;
     }
-
-    public double getEntropia()
-    {
-        return entropia;
+    
+    public void setPrimeiroVetorPosicoes(int numeroObs){
+        for (int i = 0; i < numeroObs; i++) {
+            this.posicoesClasses.add(i);
+        }
     }
-
-    public void setEntropia(double entropia)
-    {
-        this.entropia = entropia;
-    }
-
-    public double getGanho()
-    {
-        return ganho;
-    }
-
-    public void setGanho(double ganho)
-    {
-        this.ganho = ganho;
-    }    
     
 }
