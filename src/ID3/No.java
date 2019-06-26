@@ -10,6 +10,8 @@ public class No
     private boolean atributoUsados[]; 
     private double corte;
     private ArrayList<Integer> posicoesClasses;
+    private double entropia;
+    private double classeNo;
     
     
     public No(int qntAtributos)
@@ -19,20 +21,59 @@ public class No
         this.pai = null;
         this.filhos = new ArrayList<>();
         this.corte = 0.0;
-        
+        this.entropia = 0.0;
+        this.classeNo = 0;
     }
 
+    public No()
+    {
+        this.posicoesClasses = new ArrayList<>();
+        this.pai = null;
+        this.filhos = new ArrayList<>();
+        this.corte = 0.0;
+        this.entropia = 0.0;
+        this.classeNo = 0;
+    }
+    
     @Override
     public String toString() {
         return "No{" + "id=" + id + ", pai=" + pai + ", atributoUsados=" + atributoUsados[id-1] + ", corte=" + corte + '}';
     }
 
+    public double getEntropia() {
+        return entropia;
+    }
+
+    public void setEntropia(double entropia) {
+        this.entropia = entropia;
+    }
+
+    public double getClasseNo() {
+        return classeNo;
+    }
+
+    public void setClasseNo(double classeNo) {
+        this.classeNo = classeNo;
+    }
+    
+    
+
     public ArrayList<Integer> getPosicoesClasses() {
         return posicoesClasses;
     }
 
-    public void setPosicoesClasses(ArrayList<Integer> posicoesClasses) {
-        this.posicoesClasses = posicoesClasses;
+    public ArrayList<No> getFilhos() {
+        return filhos;
+    }
+    
+    
+
+//    public void setPosicoesClasses(ArrayList<Integer> posicoesClasses) {
+//        this.posicoesClasses = posicoesClasses;
+//    }
+    
+    public void addPosicoesClasses(int posicao) {
+        this.posicoesClasses.add(posicao);
     }
 
     
@@ -57,8 +98,12 @@ public class No
         return atributoUsados;
     }
 
-    public void setAtributoUsados(int posicao) {
+    public void addAtributoUsados(int posicao) {
         this.atributoUsados[posicao] = true;
+    }
+
+    public void setAtributoUsados(boolean[] atributoUsados) {
+        this.atributoUsados = atributoUsados;
     }
 
     public double getCorte()
@@ -75,6 +120,28 @@ public class No
         for (int i = 0; i < numeroObs; i++) {
             this.posicoesClasses.add(i);
         }
+    }
+    
+    public void dividirFilhos(ArrayList<double[]> vetorAtributos){
+        No filho1 = new No(), filho2 = new No();
+        for (int i = 0; i < posicoesClasses.size(); i++) {
+            if(vetorAtributos.get(id)[posicoesClasses.get(i)]  <= corte){
+                filho1.addPosicoesClasses(i);
+            } else {
+                filho2.addPosicoesClasses(i);
+            }
+        }
+        filho1.setPai(this);
+        filho2.setPai(this);
+        
+        filho1.setAtributoUsados(this.getAtributoUsados());
+        filho1.addAtributoUsados(this.id);
+        filho2.setAtributoUsados(this.getAtributoUsados());
+        filho2.addAtributoUsados(this.id);
+
+        this.filhos.add(filho1);
+        this.filhos.add(filho2);
+
     }
     
 }

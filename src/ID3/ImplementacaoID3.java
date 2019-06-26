@@ -8,7 +8,6 @@ public class ImplementacaoID3 {
     double atributosTreinamento[][]; 
     double atributosTeste[][];
     double classe[];
-    boolean atributosUsados[];
     int quantidadeClasses;
     ArrayList<double[]> vetorAtributos;
     
@@ -25,17 +24,13 @@ public class ImplementacaoID3 {
         No raiz = new No(vetorAtributos.size());
         
         raiz.setPai(null);
-        raiz.setId(escolherMelhorAtributo(calcularEntropiaTotal(),raiz.getAtributoUsados()));
-        raiz.setCorte(calcularCorte(vetorAtributos.get(raiz.getId())));
         raiz.setPrimeiroVetorPosicoes(vetorAtributos.get(0).length);
+        raiz.setEntropia(calcularEntropiaTotal(raiz.getPosicoesClasses()));
+//        raiz.setId(escolherMelhorAtributo(raiz.getEntropia(),raiz.getAtributoUsados(),raiz.getPosicoesClasses()));
+//        raiz.setCorte(calcularCorte(raiz.getPosicoesClasses(), raiz.getId()));
         
-        //gerarArvore(raiz);
-        
-        
-  
-        
-        //escolherMelhorAtributo(calcularEntropiaTotal(),atributosUsados);
-        //this.costruirArvore(raiz,1);
+        No retorno = gerarArvore(raiz);
+        System.out.println(""+retorno.toString());
         
     }
     
@@ -92,36 +87,55 @@ public class ImplementacaoID3 {
     }
     
     public No gerarArvore(No noAtual){
-        if(verificarEstadoFinal(noAtual.getPosicoesClasses())) {
+//        if(verificarEstadoFinal(noAtual.getPosicoesClasses())) {
+//            return noAtual;
+//        }
+        // Condição de parada caso a entropia for 0
+        if(noAtual.getEntropia() == 0){
+            noAtual.setClasseNo(classe[noAtual.getPosicoesClasses().get(0)]);
             return noAtual;
         }
         
-        // Dividir filhos
-                
+        //Adicionar mais uma condição de parada caso todos os atributos já forem usados;
         
-        return null;
-    }
-    
-    public boolean verificarEstadoFinal(ArrayList<Integer> posicoes){
-        //Essa função pode não estar funcionando
-        for (int i = 1; i < posicoes.size(); i++) {
-            if(classe[posicoes.get(i-1)] != classe[posicoes.get(i)]){
-                return false;
-            }
+        noAtual.setId(escolherMelhorAtributo(noAtual.getEntropia(), noAtual.getAtributoUsados(), noAtual.getPosicoesClasses()));
+        noAtual.setCorte(calcularCorte(noAtual.getPosicoesClasses(), noAtual.getId()));
+            
+        
+        noAtual.dividirFilhos(vetorAtributos);
+        ArrayList<No> filhos = noAtual.getFilhos();
+        
+        for (int i = 0; i < filhos.size(); i++) {
+            filhos.get(i).setEntropia(calcularEntropiaTotal(filhos.get(i).getPosicoesClasses()));
+ 
+            No solucao = gerarArvore(filhos.get(i));
+            
         }
-        return true;
+        
+        return noAtual;
     }
     
+//    public boolean verificarEstadoFinal(ArrayList<Integer> posicoes){
+//        //Essa função pode não estar funcionando
+//        for (int i = 1; i < posicoes.size(); i++) {
+//            if(classe[posicoes.get(i-1)] != classe[posicoes.get(i)]){
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
     
-    public double calcularEntropiaAtributos(double[] dadosAtributos)
+    // Metodo Funcionando
+    public double calcularEntropiaAtributos(ArrayList<Integer> posicoes, int idAtributo)
     { 
-        double corte = calcularCorte(dadosAtributos);
+        double corte = calcularCorte(posicoes, idAtributo);
         double[] numClassesCorte1 = new double[quantidadeClasses+1];
         double[] numClassesCorte2 = new double[quantidadeClasses+1];
              
-        for (int j = 0; j < dadosAtributos.length; j++)
+        
+        for (int j = 0; j < posicoes.size(); j++)
         {
-            if(dadosAtributos[j] <= corte)
+            if(vetorAtributos.get(idAtributo)[posicoes.get(j)] <= corte)
             {
                 for (int i = 1; i <= quantidadeClasses; i++)
                 { 
@@ -147,6 +161,7 @@ public class ImplementacaoID3 {
         
         double probabilidade = 0.0, entropia1 =0.0, entropia2 = 0.0;
         
+        
         for (int i = 0; i < numClassesCorte1.length-1; i++)
         {
             probabilidade = numClassesCorte1[i+1]/numClassesCorte1[0];
@@ -162,32 +177,34 @@ public class ImplementacaoID3 {
             }
            
         }
+        
         return (entropia1 + entropia2);
         
     }
     
-    public double calcularCorte(double[] dadosAtributos)
+    //Metodo Funcionando
+    public double calcularCorte(ArrayList<Integer> posicoes, int idAtributo)
     {
         double corte = 0.0;
-        double[] atributosI = new double[dadosAtributos.length];
-        for (int i = 0; i < dadosAtributos.length; i++)
+        double[] atributosI = new double[posicoes.size()];
+        for (int i = 0; i < atributosI.length; i++)
         {
-            atributosI[i] = dadosAtributos[i];
+            atributosI[i] = vetorAtributos.get(idAtributo)[posicoes.get(i)];
         }
         Arrays.sort(atributosI);
         corte = atributosI[atributosI.length/2];
-
         return corte;
     }
     
-    public double calcularEntropiaTotal()
+    //Metod Funcionando
+    public double calcularEntropiaTotal(ArrayList<Integer> posicoes)
     {
         int[] contaClasse = new int[quantidadeClasses+1];
         double entropiaTotal = 0, pi = 0;
         for (int i = 1; i <= quantidadeClasses; i++) {
-            for (int j = 0; j < classe.length; j++)
+            for (int j = 0; j < posicoes.size(); j++)
             {
-                if(classe[j] == i)
+                if(classe[posicoes.get(j)] == i)
                 {
                     contaClasse[i]++;
                 } 
@@ -196,13 +213,16 @@ public class ImplementacaoID3 {
         
         for (int i = 1; i <= quantidadeClasses; i++)
         {
-            pi = (double)contaClasse[i]/(double)classe.length;
-            entropiaTotal += (-pi * (Math.log(pi)/Math.log(quantidadeClasses)));
+            pi = (double)contaClasse[i]/(double)posicoes.size();
+            if(pi !=0){
+                entropiaTotal += (-pi * (Math.log(pi)/Math.log(quantidadeClasses)));
+            }
         }
-        System.out.println("Entropia total:"+entropiaTotal);
+        System.out.println("EntropiaTotal: "+entropiaTotal);
         return entropiaTotal;
     }
     
+    //Metodo Funcionando
     public double calcularGanho(double entropiaTotal, double entropiaAtributo)
     {
         double ganho;
@@ -211,7 +231,8 @@ public class ImplementacaoID3 {
         return ganho;
     }
     
-    public int escolherMelhorAtributo(double entropiaTotal, boolean[] atributosUsados)
+    //Metodo Funcionando    
+    public int escolherMelhorAtributo(double entropiaNo, boolean[] atributosUsados,ArrayList<Integer> posicoes)
     {
         int idMelhorAtributo = Integer.MAX_VALUE;
         double ganho = Double.MIN_VALUE, entropiaParcial = 0.0, ganhoParcial = 0.0;
@@ -219,11 +240,10 @@ public class ImplementacaoID3 {
         for (int i = 0; i < atributosUsados.length; i++)
         {
             if(!atributosUsados[i]){
-                entropiaParcial = calcularEntropiaAtributos(vetorAtributos.get(i)); 
-                ganhoParcial = calcularGanho(entropiaTotal, entropiaParcial);
+                entropiaParcial = calcularEntropiaAtributos(posicoes,i); 
+                ganhoParcial = calcularGanho(entropiaNo, entropiaParcial);
                 //System.out.println("Ganho Parcial: " + ganhoParcial);
                 if(ganhoParcial>ganho){
-                    //System.out.println("entreiii");
                     ganho = ganhoParcial;
                     idMelhorAtributo = i;
                 }
