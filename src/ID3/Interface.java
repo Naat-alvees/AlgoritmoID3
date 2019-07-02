@@ -213,7 +213,7 @@ public class Interface extends javax.swing.JFrame {
     private void executarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executarActionPerformed
         try {
             if(!caminhoArquivoTreinamento.getPath().isEmpty() && !caminhoArquivoTeste.getPath().isEmpty()){
-                ImplementacaoID3 algoritmoID3 = new ImplementacaoID3(caminhoArquivoTreinamento.getPath(), caminhoArquivoTeste.getPath(),3);
+                ImplementacaoID3 algoritmoID3 = new ImplementacaoID3(caminhoArquivoTreinamento.getPath(), caminhoArquivoTeste.getPath());
                 algoritmoID3.principal();
             }
         } catch (IOException ex) {

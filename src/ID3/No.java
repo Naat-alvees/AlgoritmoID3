@@ -8,24 +8,12 @@ public class No
     private int id;
     private No pai;
     private ArrayList<No> filhos;
-    private boolean atributoUsados[]; 
     private double corte;
     private ArrayList<Integer> posicoesClasses;
     private double entropia;
     private double classeNo;
     
     
-    public No(int qntAtributos)
-    {
-        this.posicoesClasses = new ArrayList<>();
-        this.atributoUsados = new boolean[qntAtributos];
-        this.pai = null;
-        this.filhos = new ArrayList<>();
-        this.corte = 0.0;
-        this.entropia = 0.0;
-        this.classeNo = 0;
-    }
-
     public No()
     {
         this.posicoesClasses = new ArrayList<>();
@@ -33,12 +21,13 @@ public class No
         this.filhos = new ArrayList<>();
         this.corte = 0.0;
         this.entropia = 0.0;
-        this.classeNo = 0;
+        this.classeNo = -1;
     }
+
     
     @Override
     public String toString() {
-        return "No{" + "id=" + id + ", pai=" + pai + ", atributoUsados=" + atributoUsados[id-1] + ", corte=" + corte + '}';
+        return "No{" + "id=" + id + ", pai=" + pai + ", corte=" + corte + '}';
     }
 
     public double getEntropia() {
@@ -95,17 +84,17 @@ public class No
     }
 
     
-    public boolean[] getAtributoUsados() {
-        return atributoUsados;
-    }
-
-    public void addAtributoUsados(int posicao) {
-        this.atributoUsados[posicao] = true;
-    }
-
-    public void setAtributoUsados(boolean[] atributoUsados) {
-        this.atributoUsados = atributoUsados;
-    }
+//    public boolean[] getAtributoUsados() {
+//        return atributoUsados;
+//    }
+//
+//    public void addAtributoUsados(int posicao) {
+//        this.atributoUsados[posicao] = true;
+//    }
+//
+//    public void setAtributoUsados(boolean[] atributoUsados) {
+//        this.atributoUsados = atributoUsados;
+//    }
 
     public double getCorte()
     {
@@ -123,21 +112,21 @@ public class No
         }
     }
     
-    public void setTodosAtributosUsadosFalse(){
-        for(int i=0; i<atributoUsados.length; i++){
-            atributoUsados[i] = false;
-        }
-    }
-    
-    // Retorna true caso todos atributos tenham sido usados
-    public boolean verificaAtributosUsados(){
-        for (int i = 0; i < atributoUsados.length; i++) {
-            if(!atributoUsados[i]){
-                return false;
-            }
-        }
-        return true;
-    }
+//    public void setTodosAtributosUsadosFalse(){
+//        for(int i=0; i<atributoUsados.length; i++){
+//            atributoUsados[i] = false;
+//        }
+//    }
+//    
+//    // Retorna true caso todos atributos tenham sido usados
+//    public boolean verificaAtributosUsados(){
+//        for (int i = 0; i < atributoUsados.length; i++) {
+//            if(!atributoUsados[i]){
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
     
     public void dividirFilhos(ArrayList<double[]> vetorAtributos){
         No filho1 = new No(), filho2 = new No();
@@ -159,20 +148,20 @@ public class No
         filho2.setPai(this);
         
         
-        filho1.setAtributoUsados(Arrays.copyOf(this.atributoUsados, atributoUsados.length));
-        filho1.addAtributoUsados(this.id);
-        filho2.setAtributoUsados(Arrays.copyOf(this.atributoUsados, atributoUsados.length));
-        filho2.addAtributoUsados(this.id);
-
-        if(filho1.verificaAtributosUsados()){
-            filho1.setTodosAtributosUsadosFalse();
-            filho1.addAtributoUsados(this.id);
-        }
-        
-        if(filho2.verificaAtributosUsados()){
-            filho2.setTodosAtributosUsadosFalse();
-            filho2.addAtributoUsados(this.id);
-        }
+//        filho1.setAtributoUsados(Arrays.copyOf(this.atributoUsados, atributoUsados.length));
+//        filho1.addAtributoUsados(this.id);
+//        filho2.setAtributoUsados(Arrays.copyOf(this.atributoUsados, atributoUsados.length));
+//        filho2.addAtributoUsados(this.id);
+//
+//        if(filho1.verificaAtributosUsados()){
+//            filho1.setTodosAtributosUsadosFalse();
+//            filho1.addAtributoUsados(this.id);
+//        }
+//        
+//        if(filho2.verificaAtributosUsados()){
+//            filho2.setTodosAtributosUsadosFalse();
+//            filho2.addAtributoUsados(this.id);
+//        }
         
         this.filhos.add(filho1);
         this.filhos.add(filho2);
