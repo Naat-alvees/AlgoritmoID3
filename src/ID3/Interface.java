@@ -5,14 +5,10 @@
  */
 package ID3;
 
-import ID3.ImplementacaoID3;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -214,7 +210,8 @@ public class Interface extends javax.swing.JFrame {
         try {
             if(!caminhoArquivoTreinamento.getPath().isEmpty() && !caminhoArquivoTeste.getPath().isEmpty()){
                 ImplementacaoID3 algoritmoID3 = new ImplementacaoID3(caminhoArquivoTreinamento.getPath(), caminhoArquivoTeste.getPath());
-                algoritmoID3.principal();
+                String resultado = algoritmoID3.principal();
+                txtSaida.append(resultado);
             }
         } catch (IOException ex) {
              JOptionPane.showMessageDialog(null, "Arquivo incorreto!", "Atenção", JOptionPane.WARNING_MESSAGE);

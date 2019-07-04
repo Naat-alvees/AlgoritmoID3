@@ -19,9 +19,9 @@ public class ImplementacaoID3 {
         quantidadeClasses = contaClasses();
     }
     
-    public void principal()
+    public String principal()
     {
-        
+        String resultado = "";
         No raiz = new No();
         
         raiz.setPai(null);
@@ -36,9 +36,12 @@ public class ImplementacaoID3 {
                 obs[j] = atributosTeste[i][j];
             }
             classificacao = -1;
-            System.out.println(classificarObservacoes(obs,raiz));
             
-        }        
+            resultado += Double.toString(classificarObservacoes(obs,raiz)) + "\n";
+            
+            
+        }   
+        return resultado;
     }
     
     public void tratarArquivo(String caminhoArquivoTreinamento, String caminhoArquivoTeste) throws IOException
