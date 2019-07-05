@@ -1,7 +1,8 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from random import randint
 
-limites = [[[0, 4], [2, 6]], [[6, 10], [2, 6]]]
+limites = [[[0, 12], [2, 60]], [[60, 72], [2, 60]]]
 
 TAMANHO_TREINAMENTO = 100
 TAMANHO_TESTE = 20
@@ -19,5 +20,15 @@ def gera_dados(quantidade):
 treinamento = gera_dados(TAMANHO_TREINAMENTO)
 teste = gera_dados(TAMANHO_TESTE)
 
-np.savetxt("treinamento.txt", treinamento, fmt="%d")
-np.savetxt("teste.txt", teste, fmt="%d")
+x1 = treinamento[0:int(TAMANHO_TREINAMENTO/2), 0]
+y1 = treinamento[0:int(TAMANHO_TREINAMENTO/2), 1]
+plt.scatter(x1, y1)
+plt.show()
+
+x2 = treinamento[int(TAMANHO_TREINAMENTO/2): TAMANHO_TREINAMENTO, 0]
+y2 = treinamento[int(TAMANHO_TREINAMENTO/2): TAMANHO_TREINAMENTO, 1]
+plt.scatter(x2, y2)
+plt.show()
+
+np.savetxt("treinamento.csv", treinamento, delimiter=",", fmt="%d")
+np.savetxt("teste.csv", teste, delimiter=",", fmt="%d")
