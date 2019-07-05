@@ -30,6 +30,5 @@ y2 = treinamento[int(TAMANHO_TREINAMENTO/2): TAMANHO_TREINAMENTO, 1]
 plt.scatter(x2, y2)
 plt.show()
 
-
-np.savetxt("treinamento.txt", treinamento, fmt="%d")
-np.savetxt("teste.txt", teste, fmt="%d")
+np.savetxt("treinamento.csv", treinamento, delimiter=",", fmt="%d")
+np.savetxt("teste.csv", teste, delimiter=",", fmt="%d")
