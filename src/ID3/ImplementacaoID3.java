@@ -8,6 +8,8 @@ public class ImplementacaoID3 {
     double atributosTreinamento[][]; 
     double atributosTeste[][];
     double classe[];
+    double classeTeste[];
+    double resultado[];
     int quantidadeClasses;
     ArrayList<double[]> vetorAtributos;
     double classificacao = -1;
@@ -19,9 +21,11 @@ public class ImplementacaoID3 {
         quantidadeClasses = contaClasses();
     }
     
-    public String principal()
+    public String[] principal()
     {
-        String resultado = "";
+        String[] resultadoRetorno = new String[5];
+        resultado = new double[atributosTeste.length];
+        int acertos = 0;
         No raiz = new No();
         
         raiz.setPai(null);
@@ -37,11 +41,23 @@ public class ImplementacaoID3 {
             }
             classificacao = -1;
             
-            resultado += Double.toString(classificarObservacoes(obs,raiz)) + "\n";
+            resultado[i] = classificarObservacoes(obs,raiz);
             
             
+            if(resultado[i] == classeTeste[i]){
+                acertos++;
+            }
+            
+            resultadoRetorno[0] += Double.toString(resultado[i]) + "\n";
         }   
-        return resultado;
+        
+        System.out.println("Acertos: "+acertos);
+        System.out.println("Total:" + atributosTeste.length);
+        resultadoRetorno[1] = Double.toString(((double)acertos / (double) atributosTeste.length)*100);
+        resultadoRetorno[2] = Integer.toString(acertos);
+        resultadoRetorno[3] = Integer.toString(atributosTeste.length);
+        resultadoRetorno[4] = Integer.toString(atributosTeste.length-acertos);
+        return resultadoRetorno;
     }
     
     public void tratarArquivo(String caminhoArquivoTreinamento, String caminhoArquivoTeste) throws IOException
@@ -54,6 +70,7 @@ public class ImplementacaoID3 {
         arquivoInteiroTeste = LerArquivo.leitorString(caminhoArquivoTeste);
         
         classe = new double[arquivoInteiroTreinamento.size()];
+        classeTeste = new double[arquivoInteiroTeste.size()];
         atributosTreinamento = new double[arquivoInteiroTreinamento.size()][];
         atributosTeste = new double[arquivoInteiroTeste.size()][];
         
@@ -73,7 +90,12 @@ public class ImplementacaoID3 {
             linhaLida = arquivoInteiroTeste.get(i).split(",");
             atributosTeste[i] = new double[linhaLida.length];
             for (int j = 0; j < linhaLida.length; j++) {
-                atributosTeste[i][j] = Double.parseDouble(linhaLida[j]);
+                
+                if(j != (linhaLida.length-1)){
+                    atributosTeste[i][j] = Double.parseDouble(linhaLida[j]);
+                } else {
+                    classeTeste[i] = Double.parseDouble(linhaLida[j]);
+                }
             }
         }
         costruirArrayAtributos();
