@@ -40,10 +40,7 @@ public class ImplementacaoID3 {
                 obs[j] = atributosTeste[i][j];
             }
             classificacao = -1;
-            
             resultado[i] = classificarObservacoes(obs,raiz);
-            
-            
             if(resultado[i] == classeTeste[i]){
                 acertos++;
             }
@@ -51,19 +48,19 @@ public class ImplementacaoID3 {
             resultadoRetorno[0] += Double.toString(resultado[i]) + "\n";
         }   
         
-        System.out.println("Acertos: "+acertos);
-        System.out.println("Total:" + atributosTeste.length);
         resultadoRetorno[1] = Double.toString(((double)acertos / (double) atributosTeste.length)*100);
         resultadoRetorno[2] = Integer.toString(acertos);
         resultadoRetorno[3] = Integer.toString(atributosTeste.length);
         resultadoRetorno[4] = Integer.toString(atributosTeste.length-acertos);
+        
         return resultadoRetorno;
     }
     
     public void tratarArquivo(String caminhoArquivoTreinamento, String caminhoArquivoTeste) throws IOException
     {
         ArrayList<String> arquivoInteiroTreinamento = new ArrayList<>();
-        ArrayList<String> arquivoInteiroTeste = new ArrayList<>();
+        ArrayList<String> arquivoInteiroTeste;
+        arquivoInteiroTeste = new ArrayList<>();
         String linhaLida[];
         
         arquivoInteiroTreinamento = LerArquivo.leitorString(caminhoArquivoTreinamento);
@@ -90,7 +87,6 @@ public class ImplementacaoID3 {
             linhaLida = arquivoInteiroTeste.get(i).split(",");
             atributosTeste[i] = new double[linhaLida.length];
             for (int j = 0; j < linhaLida.length; j++) {
-                
                 if(j != (linhaLida.length-1)){
                     atributosTeste[i][j] = Double.parseDouble(linhaLida[j]);
                 } else {
@@ -99,7 +95,6 @@ public class ImplementacaoID3 {
             }
         }
         costruirArrayAtributos();
-        
     }
     
     public void costruirArrayAtributos()
@@ -115,7 +110,6 @@ public class ImplementacaoID3 {
             vetorAtributos.add(i,atributosI);
             idAtributo++;
         }
-       
     }
     
     public int contaClasses(){
@@ -130,23 +124,24 @@ public class ImplementacaoID3 {
     
     public void gerarArvore(No noAtual){
         if(noAtual.getEntropia() == 0){
-            noAtual.setClasseNo(classe[noAtual.getPosicoesClasses().get(noAtual.getPosicoesClasses().size()-1)]);
-            //System.out.println("Classe:"+noAtual.getClasseNo());
+            noAtual.setClasseNo(classe[noAtual.getPosicoesClasses().get
+                (noAtual.getPosicoesClasses().size()-1)]);
             return;
         }
                 
-        int melhorAtributo = escolherMelhorAtributo(noAtual.getEntropia(), noAtual.getPosicoesClasses());
+        int melhorAtributo = escolherMelhorAtributo(noAtual.getEntropia(), 
+                noAtual.getPosicoesClasses());
         noAtual.setId(melhorAtributo);
-        noAtual.setCorte(calcularCorte(noAtual.getPosicoesClasses(), noAtual.getId()));  
+        noAtual.setCorte(calcularCorte(noAtual.getPosicoesClasses(), 
+                noAtual.getId()));  
         
         noAtual.dividirFilhos(vetorAtributos);
         ArrayList<No> filhos = noAtual.getFilhos();
         
         for (int i = 0; i < filhos.size(); i++) {
-            filhos.get(i).setEntropia(calcularEntropiaTotal(filhos.get(i).getPosicoesClasses()));
- 
+            filhos.get(i).setEntropia(calcularEntropiaTotal(filhos.get(i).
+                    getPosicoesClasses()));
             gerarArvore(filhos.get(i));
-            
         }
     }
     
@@ -166,7 +161,6 @@ public class ImplementacaoID3 {
         return classificacao;
     }
     
-    // Metodo Funcionando
     public double calcularEntropiaAtributos(ArrayList<Integer> posicoes, int idAtributo)
     { 
         double corte = calcularCorte(posicoes, idAtributo);
@@ -206,8 +200,6 @@ public class ImplementacaoID3 {
             }   
         }
         
-        
-        
         double probabilidade = 0.0, entropia1 =0.0, entropia2 = 0.0;
         
         
@@ -224,9 +216,7 @@ public class ImplementacaoID3 {
             {
                entropia2 += probabilidade * (-probabilidade * (Math.log(probabilidade)/Math.log(quantidadeClasses)));  
             }
-           
         }
-        
         return (entropia1 + entropia2);
         
     }
@@ -238,15 +228,6 @@ public class ImplementacaoID3 {
         double[] atributosI = new double[posicoes.size()];
         for (int i = 0; i < atributosI.length; i++)
         {
-            if(posicoes.get(i) == -1){
-                System.out.println("Chegouaqui");
-            }
-            if(idAtributo == -1){
-                System.out.println("Veioaqui");
-            }
-            if(i == -1){
-                System.out.println("Veioaqui2");
-            }
             atributosI[i] = vetorAtributos.get(idAtributo)[posicoes.get(i)];
         }
         Arrays.sort(atributosI);
@@ -256,12 +237,9 @@ public class ImplementacaoID3 {
         } else {
             corte = atributosI[atributosI.length/2];
         }
-        
-        
         return corte;
     }
     
-    //Metod Funcionando
     public double calcularEntropiaTotal(ArrayList<Integer> posicoes)
     {
         int[] contaClasse = new int[quantidadeClasses];
@@ -280,14 +258,12 @@ public class ImplementacaoID3 {
         {
             pi = (double)contaClasse[i]/(double)posicoes.size();
             if(pi !=0){
-                entropiaTotal += (-pi * (Math.log(pi)/Math.log(quantidadeClasses)));
+              entropiaTotal += (-pi*(Math.log(pi)/Math.log(quantidadeClasses)));
             }
         }
-        //System.out.println("EntropiaTotal: "+entropiaTotal);
         return entropiaTotal;
     }
     
-    //Metodo Funcionando
     public double calcularGanho(double entropiaTotal, double entropiaAtributo)
     {
         double ganho;
@@ -295,8 +271,7 @@ public class ImplementacaoID3 {
         
         return ganho;
     }
-    
-    //Metodo Funcionando    
+     
     public int escolherMelhorAtributo(double entropiaNo,ArrayList<Integer> posicoes)
     {
         int idMelhorAtributo = -1;
@@ -306,21 +281,11 @@ public class ImplementacaoID3 {
         {
             entropiaParcial = calcularEntropiaAtributos(posicoes,i); 
             ganhoParcial = calcularGanho(entropiaNo, entropiaParcial);
-            if(ganhoParcial < 0){
-                ganhoParcial = ganhoParcial * (-1);
-                System.out.println("Entrou AQUI");
-            }
-            //System.out.println("Ganho Parcial: " + ganhoParcial);
             if(ganhoParcial>ganho){
                 ganho = ganhoParcial;
                 idMelhorAtributo = i;
             }
-                
-            
         }
-        
-        
         return idMelhorAtributo;
     }
-    
 }
